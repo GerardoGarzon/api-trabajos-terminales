@@ -18,7 +18,8 @@ class AuthController extends Controller {
     }
 
     /**
-     * Get a JWT via given credentials.
+     * Obtiene el token JWT utilizando las credenciales de acceso, si el usuario es alumno
+     * y aun no esta activa su cuenta no puede obtener el token JWT
      *
      * @return \Illuminate\Http\JsonResponse
      */

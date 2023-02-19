@@ -8,7 +8,6 @@ use App\Models\User;
 use ErrorException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Tymon\JWTAuth\Exceptions\UserNotDefinedException;
 
 class AlumnosController extends Controller {
 
@@ -107,6 +106,12 @@ class AlumnosController extends Controller {
         }
     }
 
+    /**
+     * Elimina a un alumno, unicamente puede ser ejecutada por profesores
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function delete(Request $request): JsonResponse {
         /*************************************************/
         // Validate user permissions and token
