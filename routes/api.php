@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\AlumnosController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PreregistroController;
+use App\Http\Controllers\UsersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,4 +29,16 @@ Route::post('/auth/otp/resend', [PreregistroController::class, 'update']);
 Route::post('/auth/otp/verify', [PreregistroController::class, 'verify']);
 Route::post('/auth/register', [PreregistroController::class, 'register']);
 
-Route::put('/alumno/activate', [AlumnosController::class, 'activate']);
+
+Route::group([ 'middleware' => 'api' ], function ($router) {
+    // Authorization endpoints
+    Route::post('/auth/login', [AuthController::class, 'login']);
+    Route::post('/auth/logout', [AuthController::class, 'logout']);
+    Route::post('/auth/refresh', [AuthController::class, 'refresh']);
+    Route::post('/auth/me', [AuthController::class, 'me']);
+
+    // Users and students endpoints
+    Route::get('/usuarios', [UsersController::class, 'index']);
+    Route::put('/alumno/activate', [AlumnosController::class, 'activate']);
+    Route::delete('/alumnos', [AlumnosController::class, 'delete']);
+});

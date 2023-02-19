@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Preregistro;
 use App\Models\User;
 use App\Utils\AppUtils;
+use ErrorException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,6 +18,25 @@ class PreregistroController extends Controller {
      * @return JsonResponse
      */
     public function index(): JsonResponse {
+        /*************************************************/
+        // Validate user permissions and token
+        $data = (new AuthController())->me();
+        $user = $data->getData();
+        try {
+            if ($user->type == 0) {
+                return response()->json([
+                    'code' => 401,
+                    'message' => 'Usuario no autorizado'
+                ], 401);
+            }
+        } catch (ErrorException $ex) {
+            return response()->json([
+                'code' => 401,
+                'message' => 'Usuario no autorizado'
+            ], 401);
+        }
+        /*************************************************/
+
         $preregistros = Preregistro::all();
         return response()->json([
             'code' => 200,
@@ -66,7 +86,7 @@ class PreregistroController extends Controller {
         try {
             $preregistro = new Preregistro;
             $preregistro->setAttribute('email', $request->get('email'));
-            $preregistro->setAttribute('password', $request->get('password'));
+            $preregistro->setAttribute('password', bcrypt($request->get('password')));
             $preregistro->setAttribute('otp', AppUtils::generateOTP(5));
             $preregistro->setAttribute('is_student', $request->get('isAlumno'));
             if ( $request->get('isAlumno') ){
