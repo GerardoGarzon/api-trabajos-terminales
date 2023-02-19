@@ -9,6 +9,7 @@ use ErrorException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Password;
 
 class PreregistroController extends Controller {
 

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AlumnosController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\PreregistroController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Http\Request;
@@ -22,20 +23,24 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Preregister routes
-Route::get('/auth/preregister', [PreregistroController::class, 'index']);
-Route::post('/auth/preregister', [PreregistroController::class, 'store']);
-Route::post('/auth/otp/resend', [PreregistroController::class, 'update']);
-Route::post('/auth/otp/verify', [PreregistroController::class, 'verify']);
-Route::post('/auth/register', [PreregistroController::class, 'register']);
-
 
 Route::group([ 'middleware' => 'api' ], function ($router) {
+    // Preregister routes
+    Route::get('/auth/preregister', [PreregistroController::class, 'index']);
+    Route::post('/auth/preregister', [PreregistroController::class, 'store']);
+    Route::post('/auth/otp/resend', [PreregistroController::class, 'update']);
+    Route::post('/auth/otp/verify', [PreregistroController::class, 'verify']);
+    Route::post('/auth/register', [PreregistroController::class, 'register']);
+
     // Authorization endpoints
     Route::post('/auth/login', [AuthController::class, 'login']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::post('/auth/refresh', [AuthController::class, 'refresh']);
     Route::post('/auth/me', [AuthController::class, 'me']);
+
+    // Forgot password
+    Route::post('/password/forgot', [PasswordResetController::class, 'forgot']);
+    Route::post('/password/reset', [PasswordResetController::class, 'reset']);
 
     // Users and students endpoints
     Route::get('/usuarios', [UsersController::class, 'index']);
