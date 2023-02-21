@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\AlumnosController;
+use App\Http\Controllers\AlumnosTrabajosController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\PreregistroController;
+use App\Http\Controllers\TrabajosController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -46,4 +48,13 @@ Route::group([ 'middleware' => 'api' ], function ($router) {
     Route::get('/usuarios', [UsersController::class, 'index']);
     Route::put('/alumno/activate', [AlumnosController::class, 'activate']);
     Route::delete('/alumnos', [AlumnosController::class, 'delete']);
+
+    // TTs endpoints
+    Route::get('/trabajo', [TrabajosController::class, 'index']);
+    Route::post('/trabajo', [TrabajosController::class, 'store']);
+    Route::delete('/trabajo', [TrabajosController::class, 'delete']);
+    Route::put('/trabajo', [TrabajosController::class, 'update']);
+    Route::put('/trabajo/new/student', [AlumnosTrabajosController::class, 'add']);
+    Route::put('/trabajo/delete/student', [AlumnosTrabajosController::class, 'remove']);
+    Route::put('/trabajo/update/student', [AlumnosTrabajosController::class, 'update']);
 });
