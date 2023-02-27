@@ -27,7 +27,10 @@ class AuthController extends Controller {
         $credentials = request(['email', 'password']);
 
         if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Credenciales invalidas'], 401);
+            return response()->json([
+                'code' => 401,
+                'message' => 'Credenciales invalidas'
+            ]);
         }
 
         $user_data = User::where([

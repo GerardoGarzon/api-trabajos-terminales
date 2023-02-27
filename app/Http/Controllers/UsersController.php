@@ -41,4 +41,16 @@ class UsersController extends Controller {
             'data' => $preregistros
         ]);
     }
+
+    public function getProfesors(Request $request) {
+        $usuarios = User::where([
+            ['type', 1]
+        ])->get();
+
+        return response()->json([
+            'code' => 200,
+            'message' => 'Lista de profesores',
+            'data' => $usuarios
+        ]);
+    }
 }
