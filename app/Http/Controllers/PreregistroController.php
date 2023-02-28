@@ -243,7 +243,7 @@ class PreregistroController extends Controller {
         if ( count($preregistro) === 0 ) {
             return response()->json([
                 'code' => 404,
-                'message' => 'Codigo y/o email incorrectos'
+                'message' => 'Codigo incorrecto'
             ]);
         } else {
             $token = md5(uniqid(rand(), true));
