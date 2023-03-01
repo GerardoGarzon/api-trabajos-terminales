@@ -48,11 +48,11 @@ class AuthController extends Controller {
                     'message' => 'Solicita la activación de tu cuenta a tu profesor'
                 ]);
             } else {
-                return $this->respondWithToken($token);
+                return $this->respondWithToken($token, true);
             }
         }
 
-        return $this->respondWithToken($token);
+        return $this->respondWithToken($token, false);
     }
 
     /**
@@ -72,7 +72,7 @@ class AuthController extends Controller {
     public function logout() {
         auth()->logout();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json(['message' => 'Sesion terminada']);
     }
 
     /**
@@ -87,15 +87,16 @@ class AuthController extends Controller {
     /**
      * Get the token array structure.
      *
-     * @param  string $token
+     * @param string $token
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function respondWithToken($token) {
+    protected function respondWithToken(string $token, bool $isAlumno) {
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() *0
+            'expires_in' => auth()->factory()->getTTL() *0,
+            'isAlumno' => $isAlumno
         ]);
     }
 }

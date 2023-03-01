@@ -180,10 +180,17 @@ class PreregistroController extends Controller {
             }
 
             if ($result) {
-                return response()->json([
-                    'code' => 201,
-                    'message' => 'Registro de usuario exitoso'
-                ]);
+                if ( $preregistro[0]->is_student ) {
+                    return response()->json([
+                        'code' => 200,
+                        'message' => 'Registro de usuario exitoso, pide a tu profesor la activacion de tu cuenta.'
+                    ]);
+                } else {
+                    return response()->json([
+                        'code' => 201,
+                        'message' => 'Registro de usuario exitoso'
+                    ]);
+                }
             } else {
                 return response()->json([
                     'code' => 400,
