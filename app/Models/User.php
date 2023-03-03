@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Notifications\ResetPasswordNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -58,7 +57,7 @@ class User extends Authenticatable implements JWTSubject {
     }
 
     public function sendPasswordResetNotification($token) {
-        $url = 'http://localhost/password/reset?token=' . $token;
+        $url = 'http://localhost:4200/change/password?token=' . $token;
         $this->notify(new ResetPasswordNotification($url));
     }
 }
