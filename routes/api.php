@@ -49,6 +49,7 @@ Route::group([ 'middleware' => 'api' ], function ($router) {
     Route::put('/alumno/activate', [AlumnosController::class, 'activate']);
     Route::delete('/alumnos', [AlumnosController::class, 'delete']);
     Route::get('/profesors', [UsersController::class, 'getProfesors']);
+    Route::get('/profesor/detail/{user}', [UsersController::class, 'getProfesorDetail']);
 
     // TTs endpoints
     Route::get('/trabajo', [TrabajosController::class, 'index']);

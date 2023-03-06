@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Preregistro;
+use App\Models\Profesor;
 use App\Models\User;
 use ErrorException;
 use Illuminate\Http\JsonResponse;
@@ -43,14 +44,54 @@ class UsersController extends Controller {
     }
 
     public function getProfesors(Request $request) {
+        $profesors_array = array();
         $usuarios = User::where([
             ['type', 1]
         ])->get();
 
+        foreach ($usuarios as $usuario) {
+            $profesor = Profesor::where([
+                ['userId', $usuario->id]
+            ])->get();
+
+            array_push($profesors_array, [
+                'id' => $usuario->id,
+                'name' => $usuario->name,
+                'email' => $usuario->email,
+                'phone' => $usuario->phone,
+                'type' => $usuario->type,
+                'githubURL' => $profesor[0]->githubURL,
+                'driveURL' => $profesor[0]->driveURL,
+                'location' => $profesor[0]->location,
+            ]);
+        }
+
         return response()->json([
             'code' => 200,
             'message' => 'Lista de profesores',
-            'data' => $usuarios
+            'data' => $profesors_array
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     * @param User $user
+     * @return JsonResponse
+     */
+    public function getProfesorDetail(Request $request, User $user): JsonResponse {
+        $profesor = Profesor::where([
+            ['userId', $user->id]
+        ])->get();
+
+        return response()->json([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'phone' => $user->phone,
+            'type' => $user->type,
+            'githubURL' => $profesor[0]->githubURL,
+            'driveURL' => $profesor[0]->driveURL,
+            'location' => $profesor[0]->location,
         ]);
     }
 }
