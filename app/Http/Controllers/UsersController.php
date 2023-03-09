@@ -94,4 +94,5 @@ class UsersController extends Controller {
             'location' => $profesor[0]->location,
         ]);
     }
+
 }

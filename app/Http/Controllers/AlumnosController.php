@@ -166,4 +166,70 @@ class AlumnosController extends Controller {
             ]);
         }
     }
+
+    /**
+     * Elimina a un preregistro, unicamente puede ser ejecutada por profesores
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function deletePreregister(Request $request): JsonResponse {
+        /*************************************************/
+        // Validate user permissions and token
+        $data = (new AuthController())->me();
+        $user = $data->getData();
+        try {
+            if ($user->type == 0) {
+                return response()->json([
+                    'code' => 401,
+                    'message' => 'Usuario no autorizado'
+                ], 401);
+            }
+        } catch (ErrorException $ex) {
+            return response()->json([
+                'code' => 401,
+                'message' => 'Usuario no autorizado'
+            ], 401);
+        }
+        /*************************************************/
+
+        $request->validate([
+            'alumno_email' => 'required'
+        ]);
+
+        $preregistro = Preregistro::where([
+            ['email', $request->get('alumno_email')]
+        ])->get();
+
+        if (count($preregistro) > 0) {
+            $preregistro[0]->delete();
+
+            $usuario = User::where([
+                ['email', $request->get('alumno_email')]
+            ])->get();
+
+            if (count($usuario) > 0) {
+                $alumno_id = json_decode($usuario[0]);
+                $alumno = Alumno::where([
+                    ['userId', $alumno_id->id]
+                ])->get();
+                $alumno[0]->delete();
+                $usuario[0]->delete();
+                return response()->json([
+                    'code' => 200,
+                    'message' => 'Alumno eliminado exitosamente'
+                ]);
+            } else {
+                return response()->json([
+                    'code' => 400,
+                    'message' => 'Alumno no encontrado'
+                ]);
+            }
+        } else {
+            return response()->json([
+                'code' => 400,
+                'message' => 'Alumno no encontrado'
+            ]);
+        }
+    }
 }

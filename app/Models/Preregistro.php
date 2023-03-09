@@ -13,7 +13,6 @@ class Preregistro extends Model {
         'is_student',
         'auth_profesor',
         'token',
-        'created_at',
         'updated_at'
     ];
 }

@@ -5,6 +5,7 @@ use App\Http\Controllers\AlumnosTrabajosController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\PreregistroController;
+use App\Http\Controllers\ProfesorTrabajosController;
 use App\Http\Controllers\TrabajosController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Http\Request;
@@ -48,11 +49,14 @@ Route::group([ 'middleware' => 'api' ], function ($router) {
     Route::get('/usuarios', [UsersController::class, 'index']);
     Route::put('/alumno/activate', [AlumnosController::class, 'activate']);
     Route::delete('/alumnos', [AlumnosController::class, 'delete']);
+    Route::delete('/preregistros', [AlumnosController::class, 'deletePreregister']);
     Route::get('/profesors', [UsersController::class, 'getProfesors']);
     Route::get('/profesor/detail/{user}', [UsersController::class, 'getProfesorDetail']);
+    Route::get('/profesor/trabajos/{user}', [ProfesorTrabajosController::class, 'getProfesorTrabajos']);
 
     // TTs endpoints
     Route::get('/trabajo', [TrabajosController::class, 'index']);
+    Route::get('/trabajo/{trabajo}', [TrabajosController::class, 'get']);
     Route::post('/trabajo', [TrabajosController::class, 'store']);
     Route::delete('/trabajo', [TrabajosController::class, 'delete']);
     Route::put('/trabajo', [TrabajosController::class, 'update']);

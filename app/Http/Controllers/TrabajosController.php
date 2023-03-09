@@ -47,6 +47,41 @@ class TrabajosController extends Controller {
      * @param Request $request
      * @return JsonResponse
      */
+    public function get(Request $request, Trabajo $trabajo): JsonResponse {
+        /*************************************************/
+        // Validate user permissions and token
+        $data = (new AuthController())->me();
+        $user = $data->getData();
+        try {
+            if ($user->id == null) {
+                return response()->json([
+                    'code' => 401,
+                    'message' => 'Usuario no autorizado'
+                ], 401);
+            }
+        } catch (ErrorException $ex) {
+            return response()->json([
+                'code' => 401,
+                'message' => 'Usuario no autorizado'
+            ], 401);
+        }
+        /*************************************************/
+        $alumnos = AlumnoTrabajo::where([
+            ['tt_id', $trabajo->id]
+        ])->get();
+        $trabajo->setAttribute('alumnos', $alumnos);
+
+        return response()->json([
+            'code' => 200,
+            'message' => 'Listado de trabajos terminales',
+            'data' => $trabajo
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function store(Request $request): JsonResponse {
         /*************************************************/
         // Validate user permissions and token
@@ -72,6 +107,7 @@ class TrabajosController extends Controller {
             'descripcion' => 'required',
             'tipo' => 'required|integer',
             'link' => 'required',
+            'numero' => 'required',
             'alumnos' => 'required|array'
         ]);
 
@@ -81,6 +117,7 @@ class TrabajosController extends Controller {
         $trabajo_terminal->setAttribute('type', $request->get('tipo'));
         $trabajo_terminal->setAttribute('link', $request->get('link'));
         $trabajo_terminal->setAttribute('status', 0);
+        $trabajo_terminal->setAttribute('tt_identificador', $request->get('numero'));
         $result = $trabajo_terminal->save();
 
         $alumnos = $request->get('alumnos');
