@@ -106,6 +106,73 @@ class AlumnosController extends Controller {
         }
     }
 
+
+    /**
+     * Activa la cuenta del alumno para que pueda iniciar sesión
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function activateAlumnos(Request $request): JsonResponse {
+        /*************************************************/
+        // Validate user permissions and token
+        $data = (new AuthController())->me();
+        $user = $data->getData();
+        try {
+            if ($user->type == 0) {
+                return response()->json([
+                    'code' => 401,
+                    'message' => 'Usuario no autorizado'
+                ], 401);
+            }
+        } catch (ErrorException $ex) {
+            return response()->json([
+                'code' => 401,
+                'message' => 'Usuario no autorizado'
+            ], 401);
+        }
+        /*************************************************/
+
+        $request->validate([
+            'alumnos_email' => 'required'
+        ]);
+
+        foreach ($request->get('alumnos_email') as $alumno_email) {
+            $alumno =  User::where([
+                ['email', $alumno_email]
+            ])->get();
+
+            if ( count($alumno) === 0 ) {
+                return response()->json([
+                    'code' => 400,
+                    'message' => 'Alumno no encontrado'
+                ]);
+            } else {
+                $usuario = json_decode($alumno[0]);
+                $alumno_info = Alumno::where([
+                    ['userId', $usuario->id]
+                ])->get();
+
+                if (count($alumno_info) > 0) {
+                    $alumno_info[0]->setAttribute('is_active', true);
+                    $alumno_info[0]->save();
+
+                    $preregistro = Preregistro::where([
+                        ['email', $alumno_email]
+                    ])->get();
+
+                    if (count($preregistro) > 0) {
+                        $preregistro[0]->delete();
+                    }
+                }
+            }
+        }
+        return response()->json([
+            'code' => 200,
+            'message' => 'Alumnos activados correctamente'
+        ]);
+    }
+
     /**
      * Elimina a un alumno, unicamente puede ser ejecutada por profesores
      *
