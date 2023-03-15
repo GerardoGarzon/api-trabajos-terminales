@@ -32,6 +32,10 @@ class ProfesorsController extends Controller {
         }
     }
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function addLinkProfesor(Request $request): JsonResponse {
         /*************************************************/
         // Validate user permissions and token
@@ -57,9 +61,13 @@ class ProfesorsController extends Controller {
             'data' => 'required'
         ]);
 
+        $profesor_user = User::where([
+            ['id', $user->id]
+        ])->get();
+
         if ($request->get('tipo') == 0) { // PHONE
-            $user->setAttribute('phone', $request->get('data'));
-            $user->save();
+            $profesor_user[0]->setAttribute('phone', $request->get('data'));
+            $profesor_user[0]->save();
 
             return response()->json([
                 'code' => 200,
@@ -70,7 +78,7 @@ class ProfesorsController extends Controller {
                 ['userId', $user->id]
             ])->get();
 
-            if ($profesor.count() === 0) {
+            if (count($profesor) === 0) {
                 return response()->json([
                     'code' => 401,
                     'message' => 'Usuario no autorizado para cambiar este valor'
@@ -84,7 +92,7 @@ class ProfesorsController extends Controller {
 
                 if ($request->get('tipo') == 1) { // GITHUB
                     $profesor[0]->setAttribute('githubURL', $value);
-                    $user->save();
+                    $profesor[0]->save();
 
                     return response()->json([
                         'code' => 200,
@@ -92,7 +100,7 @@ class ProfesorsController extends Controller {
                     ]);
                 } else if ($request->get('tipo') == 2) { // FILES
                     $profesor[0]->setAttribute('driveURL', $value);
-                    $user->save();
+                    $profesor[0]->save();
 
                     return response()->json([
                         'code' => 200,
@@ -100,7 +108,7 @@ class ProfesorsController extends Controller {
                     ]);
                 } else if ($request->get('tipo') == 3) { // UBICACION
                     $profesor[0]->setAttribute('location', $value);
-                    $user->save();
+                    $profesor[0]->save();
 
                     return response()->json([
                         'code' => 200,

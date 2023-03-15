@@ -55,10 +55,7 @@ Route::group([ 'middleware' => 'api' ], function ($router) {
     Route::get('/profesors', [UsersController::class, 'getProfesors']);
     Route::get('/profesor/detail/{user}', [UsersController::class, 'getProfesorDetail']);
     Route::get('/profesor/trabajos/{user}', [ProfesorTrabajosController::class, 'getProfesorTrabajos']);
-    Route::get('/profesor/github', [ProfesorsController::class, 'addLinkProfesor']);
-    Route::get('/profesor/files', [ProfesorsController::class, 'addLinkProfesor']);
-    Route::get('/profesor/location', [ProfesorsController::class, 'addLinkProfesor']);
-    Route::get('/profesor/phone', [ProfesorsController::class, 'addLinkProfesor']);
+    Route::post('/profesor/link', [ProfesorsController::class, 'addLinkProfesor']);
 
     // TTs endpoints
     Route::get('/trabajo', [TrabajosController::class, 'index']);
