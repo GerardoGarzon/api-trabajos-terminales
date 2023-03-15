@@ -5,6 +5,7 @@ use App\Http\Controllers\AlumnosTrabajosController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\PreregistroController;
+use App\Http\Controllers\ProfesorsController;
 use App\Http\Controllers\ProfesorTrabajosController;
 use App\Http\Controllers\TrabajosController;
 use App\Http\Controllers\UsersController;
@@ -54,10 +55,10 @@ Route::group([ 'middleware' => 'api' ], function ($router) {
     Route::get('/profesors', [UsersController::class, 'getProfesors']);
     Route::get('/profesor/detail/{user}', [UsersController::class, 'getProfesorDetail']);
     Route::get('/profesor/trabajos/{user}', [ProfesorTrabajosController::class, 'getProfesorTrabajos']);
-    Route::get('/profesor/github', [ProfesorTrabajosController::class, 'getProfesorTrabajos']);
-    Route::get('/profesor/files', [ProfesorTrabajosController::class, 'getProfesorTrabajos']);
-    Route::get('/profesor/location', [ProfesorTrabajosController::class, 'getProfesorTrabajos']);
-    Route::get('/profesor/phone', [ProfesorTrabajosController::class, 'getProfesorTrabajos']);
+    Route::get('/profesor/github', [ProfesorsController::class, 'addLinkProfesor']);
+    Route::get('/profesor/files', [ProfesorsController::class, 'addLinkProfesor']);
+    Route::get('/profesor/location', [ProfesorsController::class, 'addLinkProfesor']);
+    Route::get('/profesor/phone', [ProfesorsController::class, 'addLinkProfesor']);
 
     // TTs endpoints
     Route::get('/trabajo', [TrabajosController::class, 'index']);

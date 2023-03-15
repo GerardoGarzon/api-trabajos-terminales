@@ -277,6 +277,13 @@ class TrabajosController extends Controller {
                 $trabajo[0]->setAttribute('description', $request->get('descripcion'));
                 $trabajo[0]->setAttribute('type', $request->get('tipo'));
                 $trabajo[0]->setAttribute('link', $request->get('link'));
+
+                if ($request->get('tipo') == 4) {
+                    $trabajo[0]->setAttribute('status', 1);
+                } else {
+                    $trabajo[0]->setAttribute('status', 0);
+                }
+
                 $result = $trabajo[0]->save();
 
                 if ($result) {
