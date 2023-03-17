@@ -59,6 +59,7 @@ Route::group([ 'middleware' => 'api' ], function ($router) {
 
     // TTs endpoints
     Route::get('/trabajo', [TrabajosController::class, 'index']);
+    Route::get('/trabajo/search', [TrabajosController::class, 'search']);
     Route::get('/trabajo/{trabajo}', [TrabajosController::class, 'get']);
     Route::post('/trabajo', [TrabajosController::class, 'store']);
     Route::delete('/trabajo', [TrabajosController::class, 'delete']);

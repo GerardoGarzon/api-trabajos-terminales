@@ -300,4 +300,75 @@ class TrabajosController extends Controller {
             }
         }
     }
+
+    public function search(Request $request): JsonResponse {
+        /*************************************************/
+        // Validate user permissions and token
+        $data = (new AuthController())->me();
+        $user = $data->getData();
+        try {
+            if ($user->id == null) {
+                return response()->json([
+                    'code' => 401,
+                    'message' => 'Usuario no autorizado'
+                ], 401);
+            }
+        } catch (ErrorException $ex) {
+            return response()->json([
+                'code' => 401,
+                'message' => 'Usuario no autorizado'
+            ], 401);
+        }
+        /*************************************************/
+        $query = '';
+        $data = [];
+        $ids = [];
+        if ($request->has('query')) {
+            $query = $request->input('query');
+        } else {
+            return response()->json([
+                'code' => 404,
+                'message' => 'No se encotraron trabajos terminales'
+            ]);
+        }
+        if ($query == '') {
+            return response()->json([
+                'code' => 404,
+                'message' => 'No se encotraron trabajos terminales'
+            ]);
+        } else {
+            $trabajos_by_name = Trabajo::where('name', 'LIKE', '%'.$query.'%')->get();
+
+            $trabajos_by_id = Trabajo::where('tt_identificador', 'LIKE', '%'.$query.'%')->get();
+
+            foreach ($trabajos_by_id as $item) {
+                array_push($data, $item);
+                array_push($ids, $item->id);
+            }
+
+            foreach ($trabajos_by_name as $item_id) {
+                if (!in_array($item_id->id, $ids)) {
+                    array_push($data, $item_id);
+                }
+            }
+
+            $trabajos = [];
+
+            foreach ($data as $trabajo) {
+                array_push($trabajos, [
+                    'id' => $trabajo->id,
+                    'nombre' => $trabajo->name,
+                    'type' => $trabajo->type,
+                    'status' => $trabajo->status,
+                    'identificado' => $trabajo->tt_identificador
+                ]);
+            }
+
+            return response()->json([
+                'code' => 200,
+                'message' => 'Listado de trabajos terminales',
+                'data' => $trabajos
+            ]);
+        }
+    }
 }
