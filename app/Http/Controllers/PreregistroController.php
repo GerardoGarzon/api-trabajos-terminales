@@ -90,6 +90,7 @@ class PreregistroController extends Controller {
             $preregistro->setAttribute('password', bcrypt($request->get('password')));
             $preregistro->setAttribute('otp', AppUtils::generateOTP(5));
             $preregistro->setAttribute('is_student', $request->get('isAlumno'));
+            $preregistro->setAttribute('isCompleted', false);
             if ( $request->get('isAlumno') ){
                 $preregistro->setAttribute('auth_profesor', $request->get('idProfesor'));
             }
@@ -167,6 +168,8 @@ class PreregistroController extends Controller {
             $registro->setAttribute('phone', $request->get('telefono'));
             if ( $preregistro[0]->is_student ) {
                 $registro->setAttribute('type', 0);
+                $preregistro[0]->setAttribute('isCompleted', true);
+                $preregistro[0]->save();
             } else {
                 $registro->setAttribute('type', 1);
                 $preregistro[0]->delete();

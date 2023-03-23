@@ -33,7 +33,8 @@ class UsersController extends Controller {
         /*************************************************/
 
         $preregistros = Preregistro::where([
-            ['auth_profesor', $user->id]
+            ['auth_profesor', $user->id],
+            ['isCompleted', true]
         ])->get();
 
         return response()->json([
@@ -44,10 +45,23 @@ class UsersController extends Controller {
     }
 
     public function getProfesors(Request $request) {
-        $profesors_array = array();
-        $usuarios = User::where([
-            ['type', 1]
-        ])->get();
+        if ($request->has('page')) {
+            $profesors_array = array();
+            $pagination_data = User::where([
+                ['type', 1]
+            ])->paginate(9);
+            $pages = $pagination_data->lastPage();
+            $actualPage = $pagination_data->currentPage();
+
+            $usuarios = $pagination_data->items();
+        } else {
+            $profesors_array = array();
+            $usuarios = User::where([
+                ['type', 1]
+            ])->get();
+            $pages = 0;
+            $actualPage = 0;
+        }
 
         foreach ($usuarios as $usuario) {
             $profesor = Profesor::where([
@@ -69,7 +83,9 @@ class UsersController extends Controller {
         return response()->json([
             'code' => 200,
             'message' => 'Lista de profesores',
-            'data' => $profesors_array
+            'data' => $profesors_array,
+            'numberPages' => $pages,
+            'activePage' => $actualPage
         ]);
     }
 
