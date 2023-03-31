@@ -48,6 +48,7 @@ Route::group([ 'middleware' => 'api' ], function ($router) {
 
     // Users and students endpoints
     Route::get('/usuarios', [UsersController::class, 'index']);
+    Route::get('/alumno', [AlumnosController::class, 'getAlumno']);
     Route::put('/alumno/activate', [AlumnosController::class, 'activate']);
     Route::put('/alumnos/activate', [AlumnosController::class, 'activateAlumnos']);
     Route::delete('/alumnos', [AlumnosController::class, 'delete']);

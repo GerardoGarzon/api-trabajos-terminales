@@ -299,4 +299,49 @@ class AlumnosController extends Controller {
             ]);
         }
     }
+
+    public function getAlumno(Request $request): JsonResponse {
+        /*************************************************/
+        // Validate user permissions and token
+        $data = (new AuthController())->me();
+        $user = $data->getData();
+        try {
+            if ($user->id == null) {
+                return response()->json([
+                    'code' => 401,
+                    'message' => 'Usuario no autorizado'
+                ], 401);
+            }
+        } catch (ErrorException $ex) {
+            return response()->json([
+                'code' => 401,
+                'message' => 'Usuario no autorizado'
+            ], 401);
+        }
+        /*************************************************/
+        $alumno = Alumno::where([
+            ['userId', $user->id]
+        ])->get();
+
+        if (count($alumno) === 0) {
+            return response()->json([
+                'code' => 404,
+                'message' => 'No se encontro ningun alumno',
+                'data' => null
+            ]);
+        } else {
+            return response()->json([
+                'code' => 200,
+                'message' => 'Informacion del alumno',
+                'data' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'phone' => $user->phone,
+                    'type' => $user->type,
+                    'boleta' => $alumno[0]->boleta
+                ]
+            ]);
+        }
+    }
 }
