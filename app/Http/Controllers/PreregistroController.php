@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NotificationOTP;
 use App\Models\Preregistro;
 use App\Models\User;
 use App\Utils\AppUtils;
@@ -9,6 +10,7 @@ use ErrorException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 
 class PreregistroController extends Controller {
@@ -60,7 +62,8 @@ class PreregistroController extends Controller {
             'isAlumno' => 'required'
         ]);
 
-        if (!preg_match('([a-zA-Z0-9]+(@alumno.ipn.mx))', $request->get('email'))) {
+        if (!preg_match('([a-zA-Z0-9]+(@alumno.ipn.mx))', $request->get('email')) &&
+            !preg_match('([a-zA-Z0-9]+(@ipn.mx))', $request->get('email')) ) {
             return response()->json([
                 'code' => 400,
                 'message' => 'Correo institucional invalido'
@@ -83,12 +86,12 @@ class PreregistroController extends Controller {
                 'message' => 'Ya existe un usuario registrado con el email'
             ]);
         }
-
+        $otp = AppUtils::generateOTP(5);
         try {
             $preregistro = new Preregistro;
             $preregistro->setAttribute('email', $request->get('email'));
             $preregistro->setAttribute('password', bcrypt($request->get('password')));
-            $preregistro->setAttribute('otp', AppUtils::generateOTP(5));
+            $preregistro->setAttribute('otp', $otp);
             $preregistro->setAttribute('is_student', $request->get('isAlumno'));
             $preregistro->setAttribute('isCompleted', false);
             if ( $request->get('isAlumno') ){
@@ -100,6 +103,8 @@ class PreregistroController extends Controller {
         }
 
         if ($result) {
+            Mail::mailer("smtp")->to($request->get('email'))->send(new NotificationOTP($otp));
+
             return response()->json([
                 'code' => 201,
                 'message' => 'Registro exitoso, se envio un codigo al correo indicado'
@@ -222,8 +227,11 @@ class PreregistroController extends Controller {
                 'message' => 'No se encontro un registro con ese correo'
             ]);
         } else {
-            $preregistro[0]->setAttribute('otp', AppUtils::generateOTP(5));
+            $otp = AppUtils::generateOTP(5);
+            $preregistro[0]->setAttribute('otp', $otp);
             $preregistro[0]->save();
+
+            Mail::mailer("smtp")->to($request->get('email'))->send(new NotificationOTP($otp));
 
             return response()->json([
                 'code' => 200,
