@@ -14,7 +14,7 @@ class AuthController extends Controller {
      * @return void
      */
     public function __construct() {
-        $this->middleware('auth:api', ['except' => ['login', 'me']]);
+        $this->middleware('auth:api', ['except' => ['login', 'me', 'inicio']]);
     }
 
     /**
@@ -97,6 +97,16 @@ class AuthController extends Controller {
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() *0,
             'isAlumno' => $isAlumno
+        ]);
+    }
+
+    /**
+     * Get deploy day
+     */
+    public function inicio() {
+        return response()->json([
+            'inicio' => 'OK',
+            'deploy' => '09/06/2023'
         ]);
     }
 }

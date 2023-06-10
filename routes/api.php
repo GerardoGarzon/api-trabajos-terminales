@@ -29,6 +29,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::group([ 'middleware' => 'api' ], function ($router) {
+    // Start
+    Route::get('/inicio', [AuthController::class, 'inicio']);
+
     // Preregister routes
     Route::get('/auth/preregister', [PreregistroController::class, 'index']);
     Route::post('/auth/preregister', [PreregistroController::class, 'store']);
